@@ -2,7 +2,6 @@
 pragma solidity 0.8.19;
 
 import "forge-std/Test.sol";
-import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import "../src/Counter.sol";
 
 contract LlamaETHRecovery {
@@ -22,8 +21,6 @@ contract LlamaETHRecovery {
 }
 
 contract DeployTest is Test {
-    using SafeTransferLib for address payable;
-
     address private constant DEPLOYER =
         0xeaCA0627C546f14FB78502e6371142931a306791;
     address private constant TARGET_CONTRACT_ADDRESS =
@@ -32,26 +29,23 @@ contract DeployTest is Test {
         0x73Eb240a06f0e0747C698A219462059be6AacCc8;
 
     function testDeploy() external {
-        console.log("test");
-
-        vm.deal(DEPLOYER, 100 ether);
         vm.startPrank(DEPLOYER);
 
-        for (uint256 i; i < 49; ) {
-            console.log("i", i);
+        for (uint256 i; ; ) {
+            console.log("Transaction nonce", i);
 
+            // Use a different method of incrementing nonce in production - this is just to make it easier to test
             LlamaETHRecovery recovery = new LlamaETHRecovery(payable(TREASURY));
 
             if (TARGET_CONTRACT_ADDRESS == address(recovery)) {
-                console.log("recovering");
-                console.log("balance before", TREASURY.balance);
+                console.log("Recovering ETH");
+                console.log("Balance before", TREASURY.balance);
 
                 recovery.recover();
 
-                console.log("balance after", TREASURY.balance);
+                console.log("Balance after", TREASURY.balance);
+                break;
             }
-
-            console.log("");
 
             unchecked {
                 ++i;
