@@ -2,23 +2,7 @@
 pragma solidity 0.8.19;
 
 import "forge-std/Test.sol";
-import "../src/Counter.sol";
-
-contract LlamaETHRecovery {
-    address payable public immutable recoveryAddress;
-
-    error ZeroAddress();
-
-    constructor(address payable _recoveryAddress) {
-        if (_recoveryAddress == address(0)) revert ZeroAddress();
-
-        recoveryAddress = _recoveryAddress;
-    }
-
-    function recover() external {
-        selfdestruct(recoveryAddress);
-    }
-}
+import {LlamaETHRecovery} from "src/LlamaETHRecovery.sol";
 
 contract DeployTest is Test {
     address private constant DEPLOYER =
@@ -44,6 +28,7 @@ contract DeployTest is Test {
                 recovery.recover();
 
                 console.log("Balance after", TREASURY.balance);
+
                 break;
             }
 
